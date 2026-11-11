@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+
+go.work
+go.work.sum
+
+*.out
+*.test
+coverage.*
+/bin/

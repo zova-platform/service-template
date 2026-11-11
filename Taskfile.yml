@@ -1,0 +1,53 @@
+version: "3"
+
+vars:
+  NAME: service-template
+  LINT: go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.13
+
+tasks:
+  default:
+    desc: List tasks
+    cmds:
+      - task --list
+    silent: true
+
+  build:
+    desc: Build the service binary into bin/
+    cmds:
+      - go build -trimpath -o bin/{{.NAME}} ./cmd/{{.NAME}}
+
+  run:
+    desc: Run the service locally
+    cmds:
+      - go run ./cmd/{{.NAME}}
+
+  test:
+    desc: Run tests with the race detector
+    cmds:
+      - go test -race -count=1 ./...
+
+  lint:
+    desc: Run golangci-lint
+    cmds:
+      - "{{.LINT}} run ./..."
+
+  tidy:
+    desc: Tidy go.mod and go.sum
+    cmds:
+      - go mod tidy
+
+  check:
+    desc: Build, lint and test
+    cmds:
+      - task: build
+      - task: lint
+      - task: test
+
+  rename:
+    desc: Rename the module and service after creating a repo from this template (NEW=trip-service)
+    requires:
+      vars: [NEW]
+    cmds:
+      - git mv cmd/{{.NAME}} cmd/{{.NEW}}
+      - grep -rl --exclude-dir=.git --exclude-dir=bin -e '{{.NAME}}' . | xargs sed -i 's/{{.NAME}}/{{.NEW}}/g'
+      - go mod tidy
