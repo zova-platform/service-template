@@ -1,6 +1,6 @@
 module github.com/zova-platform/service-template
 
-go 1.26.0
+go 1.26.11
 
 require (
 	github.com/zova-platform/platform-go v0.1.0
