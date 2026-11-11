@@ -1,0 +1,22 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  go:
+    uses: zova-platform/ci-workflows/.github/workflows/go-ci.yml@v1
+
+  image:
+    needs: go
+    if: github.event_name == 'push'
+    uses: zova-platform/ci-workflows/.github/workflows/docker-publish.yml@v1
+    permissions:
+      contents: read
+      packages: write
